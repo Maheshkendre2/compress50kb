@@ -12,6 +12,8 @@ import {
   AlertTriangle,
   Sparkles,
   ExternalLink,
+  Copy,
+  Check,
 } from 'lucide-react';
 import type { CompressedFileResult } from '@/types/compression';
 import { formatBytes, getDownloadFilename, triggerDownload } from '@/lib/utils';
@@ -25,6 +27,7 @@ interface FileCardProps {
 export default function FileCard({ item, onRemove, onRecompress }: FileCardProps) {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [activePreviewTab, setActivePreviewTab] = useState<'compressed' | 'original'>('compressed');
+  const [copiedToast, setCopiedToast] = useState(false);
 
   const handleDownload = () => {
     if (!item.blobUrl) return;
@@ -34,6 +37,48 @@ export default function FileCard({ item, onRemove, onRecompress }: FileCardProps
 
   const isImage = item.type === 'image';
   const isPdf = item.type === 'pdf';
+
+  const handleCopyToClipboard = async () => {
+    if (!item.blobUrl || !isImage) return;
+    try {
+      const response = await fetch(item.blobUrl);
+      const blob = await response.blob();
+
+      let pngBlob = blob;
+      // Most browser clipboard APIs strictly require image/png for image clipboard items
+      if (blob.type !== 'image/png') {
+        const img = new Image();
+        img.src = item.blobUrl;
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || 200;
+        canvas.height = img.naturalHeight || 200;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          const converted = await new Promise<Blob | null>((res) =>
+            canvas.toBlob((b) => res(b), 'image/png')
+          );
+          if (converted) pngBlob = converted;
+        }
+      }
+
+      if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'image/png': pngBlob,
+          }),
+        ]);
+        setCopiedToast(true);
+        setTimeout(() => setCopiedToast(false), 2500);
+      }
+    } catch (err) {
+      console.warn('Clipboard write fallback error:', err);
+    }
+  };
 
   return (
     <>
@@ -135,9 +180,9 @@ export default function FileCard({ item, onRemove, onRecompress }: FileCardProps
 
           {/* Metrics & Output Preview (Middle/Right) */}
           {item.status === 'success' && item.compressedSize !== null && (
-            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-end gap-4 border-t lg:border-t-0 border-slate-800 pt-3 lg:pt-0">
+            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-end gap-3.5 border-t lg:border-t-0 border-slate-800 pt-3 lg:pt-0">
               {/* Size Comparison Badge */}
-              <div className="flex items-center gap-3 bg-slate-950/60 rounded-2xl px-4 py-2.5 border border-slate-800/80">
+              <div className="flex items-center gap-3 bg-slate-950/60 rounded-2xl px-3.5 py-2 border border-slate-800/80">
                 <div className="text-right">
                   <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
                     Compressed
@@ -152,7 +197,7 @@ export default function FileCard({ item, onRemove, onRecompress }: FileCardProps
                 {/* Percentage Reduction Badge */}
                 <div className="flex flex-col items-center">
                   <span
-                    className={`inline-flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs sm:text-sm font-bold shadow-sm ${
+                    className={`inline-flex items-center gap-1 rounded-xl px-2 py-0.5 text-xs font-bold shadow-sm ${
                       (item.reductionPercentage ?? 0) > 0
                         ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                         : 'bg-slate-800 text-slate-300'
@@ -170,8 +215,34 @@ export default function FileCard({ item, onRemove, onRecompress }: FileCardProps
                 </div>
               </div>
 
-              {/* Action Buttons: Preview & Prominent Download */}
+              {/* Action Buttons: Copy, Preview & Prominent Download */}
               <div className="flex items-center gap-2">
+                {/* Direct Copy to Clipboard Button for Images */}
+                {isImage && item.blobUrl && (
+                  <button
+                    type="button"
+                    onClick={handleCopyToClipboard}
+                    className={`inline-flex items-center gap-1.5 h-11 px-3.5 rounded-xl border text-xs font-bold transition-all ${
+                      copiedToast
+                        ? 'bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-500/30 scale-105'
+                        : 'bg-slate-800 text-slate-300 border-slate-700/80 hover:bg-slate-700 hover:text-white'
+                    }`}
+                    title="Direct Copy to Clipboard"
+                  >
+                    {copiedToast ? (
+                      <>
+                        <Check className="h-4 w-4" />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4 text-indigo-400" />
+                        <span className="hidden sm:inline">Copy</span>
+                      </>
+                    )}
+                  </button>
+                )}
+
                 {/* Preview Button */}
                 {isImage && item.previewUrl && (
                   <button
@@ -314,14 +385,24 @@ export default function FileCard({ item, onRemove, onRecompress }: FileCardProps
                   -{item.reductionPercentage}%
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={handleDownload}
-                className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-5 py-2 text-xs font-bold text-white shadow"
-              >
-                <Download className="h-4 w-4" />
-                Download This Version
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyToClipboard}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 px-4 py-2 text-xs font-bold text-slate-200"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  <span>Copy Image</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownload}
+                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-5 py-2 text-xs font-bold text-white shadow"
+                >
+                  <Download className="h-4 w-4" />
+                  Download This Version
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -329,4 +410,3 @@ export default function FileCard({ item, onRemove, onRecompress }: FileCardProps
     </>
   );
 }
-

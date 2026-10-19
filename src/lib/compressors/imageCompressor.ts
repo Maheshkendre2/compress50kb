@@ -30,6 +30,68 @@ export function getImageDimensions(file: File): Promise<{ width: number; height:
   });
 }
 
+// Helper to resize image to exact dimensions using native HTML5 Canvas
+function resizeToExactDimensions(
+  file: File,
+  width: number,
+  height: number,
+  mimeType: string,
+  quality: number
+): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        reject(new Error('Failed to get 2D canvas context'));
+        return;
+      }
+
+      // High quality smoothing for clear signatures and passport photos
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      // Fill white background for JPEGs or transparent PNGs if converting to JPEG
+      if (mimeType === 'image/jpeg') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error('Failed to export canvas to blob'));
+            return;
+          }
+          const resizedFile = new File([blob], file.name, {
+            type: mimeType,
+            lastModified: Date.now(),
+          });
+          resolve(resizedFile);
+        },
+        mimeType,
+        quality
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Failed to load image for canvas resizing'));
+    };
+
+    img.src = url;
+  });
+}
+
 export async function compressImage(
   file: File,
   settings: CompressionSettings,
@@ -51,9 +113,27 @@ export async function compressImage(
     fileType = 'image/png';
   }
 
-  // Calculate dimension constraints based on target KB
+  let workingFile = file;
+
+  // Handle exact dimensions (e.g. 200x230 for SSC, 140x60 for Signature, 350x450 for Passport Photo)
+  if (settings.exactWidth && settings.exactHeight) {
+    if (onProgress) onProgress(20);
+    try {
+      workingFile = await resizeToExactDimensions(
+        file,
+        settings.exactWidth,
+        settings.exactHeight,
+        fileType || 'image/jpeg',
+        Math.min(Math.max(settings.quality, 0.5), 0.95)
+      );
+    } catch (e) {
+      console.warn('Exact dimension canvas resizing fallback:', e);
+    }
+  }
+
+  // Calculate dimension constraints if not exact
   let maxDimension = settings.maxWidthOrHeight;
-  if (!maxDimension) {
+  if (!settings.exactWidth && !maxDimension) {
     if (settings.targetMaxKB <= 20) {
       maxDimension = 800;
     } else if (settings.targetMaxKB <= 50) {
@@ -67,20 +147,35 @@ export async function compressImage(
 
   const options = {
     maxSizeMB: Math.max(targetMB, 0.005),
-    maxWidthOrHeight: maxDimension,
+    maxWidthOrHeight: settings.exactWidth ? Math.max(settings.exactWidth, settings.exactHeight || 0) : maxDimension,
+    alwaysKeepResolution: Boolean(settings.exactWidth && settings.exactHeight),
     useWebWorker: true,
     maxIteration: 15,
     initialQuality: Math.min(Math.max(settings.quality, 0.1), 1.0),
     fileType: fileType,
     onProgress: (p: number) => {
-      if (onProgress) onProgress(p);
+      if (onProgress) onProgress(Math.min(95, p));
     },
   };
 
-  let compressed = await imageCompression(file, options);
+  let compressed = workingFile;
 
-  // If result is still larger than targetMaxKB and we have room to downscale (e.g. 20KB target)
-  if (compressed.size > settings.targetMaxKB * 1024 && maxDimension > 400) {
+  // Only run binary compression if size exceeds target
+  if (workingFile.size > settings.targetMaxKB * 1024) {
+    try {
+      compressed = await imageCompression(workingFile, options);
+    } catch {
+      compressed = workingFile;
+    }
+  }
+
+  // If still larger than targetMaxKB and no exact dimensions locked
+  if (
+    !settings.exactWidth &&
+    compressed.size > settings.targetMaxKB * 1024 &&
+    maxDimension &&
+    maxDimension > 400
+  ) {
     const aggressiveOptions = {
       ...options,
       maxSizeMB: targetMB * 0.9,
@@ -94,9 +189,11 @@ export async function compressImage(
         compressed = secondAttempt;
       }
     } catch {
-      // Keep first compressed attempt if second fails
+      // Keep first compressed attempt
     }
   }
+
+  if (onProgress) onProgress(100);
 
   const compressedDims = await getImageDimensions(compressed);
   const blobUrl = URL.createObjectURL(compressed);
@@ -118,4 +215,3 @@ export async function compressImage(
     },
   };
 }
-
