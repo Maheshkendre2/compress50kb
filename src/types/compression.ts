@@ -7,7 +7,10 @@ export type ExamPresetId =
   | 'signature'
   | 'ssc-photo'
   | 'document-100kb'
-  | 'thumb-impression';
+  | 'thumb-impression'
+  | 'gate-photo'
+  | 'pan-card-photo'
+  | 'dv-lottery-photo';
 
 export interface ExamPresetConfig {
   id: ExamPresetId;
@@ -133,5 +136,38 @@ export const EXAM_PRESETS: Record<ExamPresetId, ExamPresetConfig> = {
     defaultQuality: 0.8,
     description: '160x100 px, under 30 KB for Banking (IBPS, SBI, RBI)',
     badge: '160x100 px • <30KB',
+  },
+  'gate-photo': {
+    id: 'gate-photo',
+    label: 'GATE Official Photo',
+    category: 'IIT GATE & JAM',
+    exactWidth: 480,
+    exactHeight: 640,
+    maxKB: 200,
+    defaultQuality: 0.85,
+    description: '480x640 px, 5-200 KB strictly compliant with IIT GATE online application portal',
+    badge: '480x640 px • <200KB',
+  },
+  'pan-card-photo': {
+    id: 'pan-card-photo',
+    label: 'PAN Card Photo (NSDL)',
+    category: 'Govt ID Portals',
+    exactWidth: 213,
+    exactHeight: 213,
+    maxKB: 30,
+    defaultQuality: 0.8,
+    description: '213x213 px at 300 DPI, under 30 KB for NSDL and UTIITSL PAN card applications',
+    badge: '213x213 px • <30KB',
+  },
+  'dv-lottery-photo': {
+    id: 'dv-lottery-photo',
+    label: 'US DV Lottery Photo',
+    category: 'Visa & Immigration',
+    exactWidth: 600,
+    exactHeight: 600,
+    maxKB: 240,
+    defaultQuality: 0.85,
+    description: '600x600 px square, under 240 KB conforming to US Department of State Green Card rules',
+    badge: '600x600 px • <240KB',
   },
 };

@@ -2,57 +2,95 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ALL_LANDING_PAGES } from '@/data/landingPages';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { Zap, Award, FileText, ChevronRight } from 'lucide-react';
 
 interface PopularToolsNavProps {
   currentSlug?: string;
 }
 
 export default function PopularToolsNav({ currentSlug }: PopularToolsNavProps) {
-  const otherPages = ALL_LANDING_PAGES.filter((p) => p.slug !== currentSlug);
+  const categories = [
+    {
+      title: 'Target File Size',
+      icon: <Zap className="h-3.5 w-3.5 text-emerald-400" />,
+      links: [
+        { href: '/compress-image-to-10kb', label: 'Image to 10KB' },
+        { href: '/compress-image-to-20kb', label: 'Image to 20KB' },
+        { href: '/compress-image-to-30kb', label: 'Image to 30KB' },
+        { href: '/compress-image-to-50kb', label: 'Image to 50KB' },
+        { href: '/compress-jpeg-to-50kb', label: 'JPEG to 50KB' },
+        { href: '/compress-image-to-100kb', label: 'Image to 100KB' },
+        { href: '/compress-jpg-to-100kb', label: 'JPG to 100KB' },
+        { href: '/compress-image-to-200kb', label: 'Image to 200KB' },
+        { href: '/reduce-image-size-in-kb', label: 'Reduce Size in KB' },
+      ],
+    },
+    {
+      title: 'Exam & Govt Portals',
+      icon: <Award className="h-3.5 w-3.5 text-amber-400" />,
+      links: [
+        { href: '/ssc-photo-resizer', label: 'SSC Photo (200x230)' },
+        { href: '/signature-compressor-20kb', label: 'Signature (140x60)' },
+        { href: '/upsc-photo-resizer', label: 'UPSC Civil Services' },
+        { href: '/pan-card-photo-resizer', label: 'PAN Card (213x213)' },
+        { href: '/gate-photo-resizer', label: 'IIT GATE (480x640)' },
+        { href: '/neet-photo-resizer', label: 'NTA NEET UG' },
+        { href: '/ibps-photo-resizer', label: 'IBPS Bank PO/Clerk' },
+        { href: '/dv-lottery-photo-tool', label: 'US DV Lottery (600x600)' },
+        { href: '/passport-photo-compressor', label: 'Passport Photo (35x45mm)' },
+      ],
+    },
+    {
+      title: 'PDF Compressors',
+      icon: <FileText className="h-3.5 w-3.5 text-rose-400" />,
+      links: [
+        { href: '/compress-pdf-under-100kb', label: 'PDF Under 100KB' },
+        { href: '/compress-pdf-to-200kb', label: 'PDF to 200KB (EPFO)' },
+        { href: '/compress-pdf-to-500kb', label: 'PDF to 500KB' },
+        { href: '/compress-pdf-to-1mb', label: 'PDF to 1MB' },
+      ],
+    },
+  ];
 
   return (
-    <section className="w-full max-w-5xl mx-auto my-12 p-6 sm:p-8 rounded-3xl border border-slate-800 bg-slate-900/50 backdrop-blur-md">
-      <div className="flex items-center gap-2 mb-2">
-        <Sparkles className="h-4 w-4 text-indigo-400" />
-        <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
-          SEO &amp; Exam Tools
-        </span>
+    <div className="w-full max-w-xl mx-auto pt-6 border-t border-slate-900 space-y-4">
+      <div className="text-center">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          Free Specialized Resizers &amp; Exam Tools
+        </h3>
+        <p className="text-[11px] text-slate-500 mt-0.5">
+          100% in-browser processing with zero server uploads
+        </p>
       </div>
-      <h3 className="text-xl sm:text-2xl font-bold text-slate-100 mb-2">
-        Popular Specialized Compression Tools
-      </h3>
-      <p className="text-xs sm:text-sm text-slate-400 mb-6">
-        Instant client-side resizers tailored for government exams, admission portals, and identity documents.
-      </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-        {otherPages.map((page) => (
-          <Link
-            key={page.slug}
-            href={`/${page.slug}`}
-            className="group flex flex-col justify-between p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-indigo-500/50 hover:bg-slate-900/80 transition-all hover:scale-[1.01]"
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        {categories.map((cat, i) => (
+          <div
+            key={i}
+            className="p-3 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-2"
           >
-            <div>
-              <span className="inline-block text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full mb-2">
-                {page.badge}
-              </span>
-              <h4 className="text-sm font-bold text-slate-200 group-hover:text-indigo-300 transition-colors">
-                {page.h1}
-              </h4>
-              <p className="text-xs text-slate-400 mt-1 line-clamp-2">
-                {page.subheading}
-              </p>
+            <div className="flex items-center gap-1.5 font-bold text-slate-300">
+              {cat.icon}
+              <span className="truncate">{cat.title}</span>
             </div>
-            <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-indigo-400 group-hover:text-indigo-300">
-              <span>Open Resizer</span>
-              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-            </div>
-          </Link>
+            <ul className="space-y-1">
+              {cat.links
+                .filter((l) => l.href.replace('/', '') !== currentSlug)
+                .map((link, j) => (
+                  <li key={j}>
+                    <Link
+                      href={link.href}
+                      className="text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1 truncate text-[11px]"
+                    >
+                      <ChevronRight className="h-2.5 w-2.5 text-slate-600 shrink-0" />
+                      <span className="truncate">{link.label}</span>
+                    </Link>
+                  </li>
+                ))}
+            </ul>
+          </div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
-

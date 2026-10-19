@@ -10,6 +10,7 @@ import {
   Trash2,
   RefreshCw,
   AlertCircle,
+  Share2,
 } from 'lucide-react';
 import type { CompressedFileResult } from '@/types/compression';
 import { formatBytes, getDownloadFilename, triggerDownload } from '@/lib/utils';
@@ -77,6 +78,24 @@ export default function ResultCard({
     const message = `Resize signatures (<20KB) & photos (<50KB) for government exam forms with zero server uploads: ${url}`;
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleNativeShare = async () => {
+    const url = typeof window !== 'undefined' ? window.location.href : 'https://shrinkpure.com';
+    const text = 'Resize signatures (<20KB) & photos (<50KB) for government exam forms with zero server uploads:';
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Compress50KB — Free In-Browser Photo & PDF Resizer',
+          text,
+          url,
+        });
+      } catch {
+        // User cancelled share
+      }
+    } else {
+      handleShareWhatsApp();
+    }
   };
 
   const isImage = item.type === 'image';
@@ -228,6 +247,33 @@ export default function ResultCard({
               <svg className="h-4 w-4 fill-white" viewBox="0 0 24 24">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.098-2.072-.511-1.841-.777-3.033-2.656-3.125-2.778-.093-.122-.736-.98-.736-1.868 0-.889.467-1.326.633-1.503.167-.178.365-.223.487-.223.122 0 .243.002.348.007.112.006.262-.043.41.314.153.366.52 1.272.566 1.365.045.093.076.202.015.324-.061.123-.092.199-.183.307-.092.107-.193.24-.275.323-.092.091-.188.191-.081.374.107.183.475.784 1.021 1.27.702.626 1.294.82 1.477.912.183.092.29.077.397-.046.107-.122.457-.533.58-.716.122-.183.244-.153.411-.092.167.061 1.057.498 1.239.589.183.091.305.137.35.213.045.076.045.441-.099.846z" />
               </svg>
+            </button>
+
+            {/* Telegram Share Icon Button */}
+            <button
+              type="button"
+              onClick={() => {
+                const url = typeof window !== 'undefined' ? window.location.href : 'https://shrinkpure.com';
+                const text = 'Resize signatures (<20KB) & photos (<50KB) for government exam forms with zero server uploads:';
+                const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+                window.open(telegramUrl, '_blank', 'noopener,noreferrer');
+              }}
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#229ED9] hover:bg-[#1d8bc0] text-white shadow-sm transition-all active:scale-95 shrink-0"
+              title="Share on Telegram"
+            >
+              <svg className="h-4 w-4 fill-white" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z" />
+              </svg>
+            </button>
+
+            {/* Native Share Icon Button (Triggers Mobile Sheet) */}
+            <button
+              type="button"
+              onClick={handleNativeShare}
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm transition-all active:scale-95 shrink-0"
+              title="Share Link / Apps"
+            >
+              <Share2 className="h-4 w-4" />
             </button>
           </div>
         </div>

@@ -1,0 +1,34 @@
+# Compress50KB — Free, In-Browser Image & PDF Compressor
+
+> Compress50KB is a 100% client-side web utility that compresses and resizes images (JPG, PNG, WebP) and PDF documents entirely in the user's browser using HTML5 Canvas and WebAssembly. No files are ever uploaded to any cloud server or database, guaranteeing complete privacy for confidential certificates, photos, and signatures.
+
+## Key Capabilities
+- Exact Target Size Compression: Under 10 KB, Under 20 KB, Under 30 KB, Under 50 KB, Under 100 KB, Under 200 KB, Under 500 KB, and custom slider.
+- Zero Server Uploads: 100% private, works offline as an installable Progressive Web App (PWA).
+- Official Exam & Government Portal Presets: SSC, UPSC, IIT GATE, NTA NEET, IBPS Bank PO, PAN Card (NSDL), US DV Lottery, International Passport (35x45 mm).
+- 1-Tap Clipboard Copy: Copy compressed images directly to clipboard for fast pasting on mobile and desktop without downloading.
+- Native PDF Compression: Strips unreferenced metadata and compresses stream dictionaries client-side.
+
+## Specialized Tools & Direct Landing Pages
+- /compress-image-to-10kb: Signature and thumbnail compressor under 10 KB for JEE, NEET, and NTA forms.
+- /compress-image-to-20kb: High-volume signature and photo compressor under 20 KB for UPSC, SSC, and state portals.
+- /compress-image-to-30kb: PAN card signatures and bank upload compressor under 30 KB.
+- /compress-image-to-50kb: The most popular photo compressor for online job and exam applications under 50 KB.
+- /compress-jpeg-to-50kb: Specialized JPEG photo compressor under 50 KB.
+- /compress-image-to-100kb: Certificate, marksheet, and high-resolution photo compressor under 100 KB.
+- /compress-jpg-to-100kb: High-resolution JPG photo compressor under 100 KB.
+- /compress-image-to-200kb: EPFO claim documents and passport portal uploads under 200 KB.
+- /reduce-image-size-in-kb: Universal image size reducer for JPG, PNG, and WebP.
+- /ssc-photo-resizer: Formats photo strictly to 200x230 px and 20-50 KB for Staff Selection Commission (SSC CGL, CHSL, MTS, GD).
+- /signature-compressor-20kb: Formats signatures to 140x60 px and 10-20 KB.
+- /upsc-photo-resizer: Formats photos to 350x350 px (20-300 KB) for UPSC Civil Services & NDA.
+- /pan-card-photo-resizer: Formats photos to 213x213 px (<30 KB) at 300 DPI for NSDL & UTIITSL.
+- /gate-photo-resizer: Formats photos to 480x640 px (5-200 KB) for IIT GATE GOAPS portal.
+- /neet-photo-resizer: Formats passport (350x450 px) and postcard (4x6 inch) photos for NTA NEET UG.
+- /ibps-photo-resizer: Formats photos to 200x230 px (20-50 KB) and signatures to 140x60 px (10-20 KB) for banking jobs.
+- /dv-lottery-photo-tool: Formats photos to 600x600 px square (<240 KB) for US Green Card Diversity Visa.
+- /passport-photo-compressor: Formats standard 350x450 px (35x45 mm) passport photos under 50 KB.
+- /compress-pdf-under-100kb: Client-side PDF compressor under 100 KB for online portals.
+- /compress-pdf-to-200kb: EPFO bank passbook and certificate PDF compressor under 200 KB.
+- /compress-pdf-to-500kb: Multi-page document PDF compressor under 500 KB.
+- /compress-pdf-to-1mb: PDF document compressor under 1 MB for email attachments and admissions.

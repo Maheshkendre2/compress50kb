@@ -72,6 +72,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link
+          rel="search"
+          type="application/opensearchdescription+xml"
+          title="Compress50KB"
+          href="/opensearch.xml"
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-slate-950">
         {children}
       </body>

@@ -6,8 +6,9 @@ import Header from '@/components/Header';
 import AdSlot from '@/components/AdSlot';
 import CompressorWorkspace from '@/components/CompressorWorkspace';
 import SeoStructuredData from '@/components/SeoStructuredData';
+import PopularToolsNav from '@/components/PopularToolsNav';
 import { LANDING_PAGES, ALL_LANDING_PAGES } from '@/data/landingPages';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, ChevronDown } from 'lucide-react';
 
 interface PageProps {
   params: Promise<{
@@ -67,7 +68,6 @@ export default async function ProgrammaticLandingPage({ params }: PageProps) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://shrinkpure.com';
   const pageUrl = `${siteUrl}/${page.slug}`;
-  const otherPages = ALL_LANDING_PAGES.filter((p) => p.slug !== slug);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
@@ -114,23 +114,33 @@ export default async function ProgrammaticLandingPage({ params }: PageProps) {
         {/* Reusable Minimalist Compressor Engine */}
         <CompressorWorkspace initialSettings={page.initialSettings} />
 
-        {/* Minimal Other Tools Links */}
-        <div className="pt-6 border-t border-slate-900 text-center">
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
-            Other Presets
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-1.5">
-            {otherPages.map((p) => (
-              <Link
-                key={p.slug}
-                href={`/${p.slug}`}
-                className="text-xs text-slate-400 hover:text-emerald-400 bg-slate-900/60 hover:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800 transition-colors"
-              >
-                {p.h1}
-              </Link>
-            ))}
-          </div>
-        </div>
+        {/* Visible FAQ Section for Google FAQPage Schema & User Trust */}
+        {page.faq && page.faq.length > 0 && (
+          <section className="pt-6 border-t border-slate-900 space-y-3">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 text-center">
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-2">
+              {page.faq.map((item, idx) => (
+                <details
+                  key={idx}
+                  className="group bg-slate-900/40 border border-slate-800/80 rounded-xl p-3 text-xs"
+                >
+                  <summary className="font-semibold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                    <span>{item.question}</span>
+                    <ChevronDown className="h-3.5 w-3.5 text-slate-500 group-open:rotate-180 transition-transform shrink-0 ml-2" />
+                  </summary>
+                  <p className="mt-2 text-slate-400 text-[11px] leading-relaxed">
+                    {item.answer}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 3-Column Hub-and-Spoke Internal Navigation */}
+        <PopularToolsNav currentSlug={slug} />
       </main>
 
       {/* Minimalist Footer */}
