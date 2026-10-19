@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
+import PresetBar from '@/components/PresetBar';
 import DropZone from '@/components/DropZone';
-import CompressionControls from '@/components/CompressionControls';
-import FileCard from '@/components/FileCard';
-import BatchSummary from '@/components/BatchSummary';
+import ResultCard from '@/components/ResultCard';
+import RecentDrawer from '@/components/RecentDrawer';
 import AdSlot from '@/components/AdSlot';
 
 import type {
@@ -14,7 +14,7 @@ import type {
 import { PRESET_CONFIGS } from '@/types/compression';
 import { compressImage } from '@/lib/compressors/imageCompressor';
 import { compressPdf } from '@/lib/compressors/pdfCompressor';
-import { FileImage, FileText } from 'lucide-react';
+import { saveRecentFile } from '@/lib/recentStorage';
 
 interface CompressorWorkspaceProps {
   initialSettings?: CompressionSettings;
@@ -36,7 +36,7 @@ export default function CompressorWorkspace({
   );
 
   const [files, setFiles] = useState<CompressedFileResult[]>([]);
-  const [isProcessingBatch, setIsProcessingBatch] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Compress a single file entry
   const processFile = useCallback(
@@ -44,7 +44,7 @@ export default function CompressorWorkspace({
       setFiles((prev) =>
         prev.map((item) =>
           item.id === fileItem.id
-            ? { ...item, status: 'compressing', progress: 10, error: undefined }
+            ? { ...item, status: 'compressing', progress: 15, error: undefined }
             : item
         )
       );
@@ -76,6 +76,18 @@ export default function CompressorWorkspace({
                 : item
             )
           );
+
+          // Save to Recent (3) storage
+          saveRecentFile({
+            id: fileItem.id,
+            name: fileItem.name,
+            type: 'image',
+            originalSize: result.originalSize,
+            compressedSize: result.compressedSize,
+            reductionPercentage: result.reductionPercentage,
+            blob: result.compressedFile,
+            timestamp: Date.now(),
+          });
         } else if (fileItem.type === 'pdf') {
           const result = await compressPdf(fileItem.file, currentSettings, (p) => {
             setFiles((prev) =>
@@ -102,12 +114,24 @@ export default function CompressorWorkspace({
                 : item
             )
           );
+
+          // Save to Recent (3) storage
+          saveRecentFile({
+            id: fileItem.id,
+            name: fileItem.name,
+            type: 'pdf',
+            originalSize: result.originalSize,
+            compressedSize: result.compressedSize,
+            reductionPercentage: result.reductionPercentage,
+            blob: result.compressedFile,
+            timestamp: Date.now(),
+          });
         }
       } catch (err: unknown) {
         const errorMsg =
           err instanceof Error
             ? err.message
-            : 'Error occurred during client-side compression';
+            : 'Error compressing file in browser';
         setFiles((prev) =>
           prev.map((item) =>
             item.id === fileItem.id
@@ -120,9 +144,10 @@ export default function CompressorWorkspace({
     []
   );
 
-  // When new files are selected or dropped
+  // Files selected from Camera or Browse
   const handleFilesSelected = useCallback(
     (newRawFiles: File[]) => {
+      setIsProcessing(true);
       const newItems: CompressedFileResult[] = newRawFiles.map((file) => {
         const isPdf =
           file.type === 'application/pdf' ||
@@ -130,7 +155,7 @@ export default function CompressorWorkspace({
         const previewUrl = !isPdf ? URL.createObjectURL(file) : null;
 
         return {
-          id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
           file,
           name: file.name,
           type: isPdf ? 'pdf' : 'image',
@@ -148,15 +173,13 @@ export default function CompressorWorkspace({
 
       setFiles((prev) => [...newItems, ...prev]);
 
-      // Automatically trigger compression for newly added files
-      newItems.forEach((item) => {
-        processFile(item, settings);
-      });
+      // Process each file
+      const promises = newItems.map((item) => processFile(item, settings));
+      Promise.all(promises).finally(() => setIsProcessing(false));
     },
     [processFile, settings]
   );
 
-  // Remove individual file
   const handleRemoveFile = useCallback((id: string) => {
     setFiles((prev) => {
       const target = prev.find((item) => item.id === id);
@@ -166,36 +189,6 @@ export default function CompressorWorkspace({
     });
   }, []);
 
-  // Recompress individual file
-  const handleRecompress = useCallback(
-    (id: string) => {
-      const target = files.find((item) => item.id === id);
-      if (target) {
-        processFile(target, settings);
-      }
-    },
-    [files, processFile, settings]
-  );
-
-  // Recompress all files
-  const handleRecompressAll = useCallback(() => {
-    setIsProcessingBatch(true);
-    const promises = files.map((fileItem) => processFile(fileItem, settings));
-    Promise.all(promises).finally(() => {
-      setIsProcessingBatch(false);
-    });
-  }, [files, processFile, settings]);
-
-  // Clear all files
-  const handleClearAll = useCallback(() => {
-    files.forEach((item) => {
-      if (item.blobUrl) URL.revokeObjectURL(item.blobUrl);
-      if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
-    });
-    setFiles([]);
-  }, [files]);
-
-  // Clean up object URLs on unmount
   useEffect(() => {
     return () => {
       files.forEach((item) => {
@@ -205,185 +198,33 @@ export default function CompressorWorkspace({
     };
   }, [files]);
 
-  // Sample file generator helper for instant testing
-  const handleLoadSample = (sampleType: 'image' | 'pdf') => {
-    if (sampleType === 'image') {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1920;
-      canvas.height = 1080;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        const grad = ctx.createLinearGradient(0, 0, 1920, 1080);
-        grad.addColorStop(0, '#1e1b4b');
-        grad.addColorStop(0.5, '#4338ca');
-        grad.addColorStop(1, '#065f46');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 1920, 1080);
-
-        for (let i = 0; i < 30; i++) {
-          ctx.beginPath();
-          ctx.arc(
-            Math.sin(i) * 800 + 960,
-            Math.cos(i) * 400 + 540,
-            Math.abs(Math.sin(i * 2)) * 120 + 30,
-            0,
-            Math.PI * 2
-          );
-          ctx.fillStyle = `rgba(255, 255, 255, ${0.05 + (i % 5) * 0.04})`;
-          ctx.fill();
-        }
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 64px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Sample Test Image', 960, 520);
-        ctx.font = '32px sans-serif';
-        ctx.fillStyle = '#a5b4fc';
-        ctx.fillText('100% Pure In-Browser Compression Test', 960, 580);
-      }
-
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const sampleFile = new File([blob], 'sample-wallpaper-1080p.jpg', {
-            type: 'image/jpeg',
-            lastModified: Date.now(),
-          });
-          handleFilesSelected([sampleFile]);
-        }
-      }, 'image/jpeg', 0.95);
-    } else {
-      import('pdf-lib').then(async ({ PDFDocument, rgb, StandardFonts }) => {
-        const doc = await PDFDocument.create();
-        const page1 = doc.addPage([600, 800]);
-        const helveticaBold = await doc.embedFont(StandardFonts.HelveticaBold);
-        const helvetica = await doc.embedFont(StandardFonts.Helvetica);
-
-        page1.drawText('Sample Confidential Document', {
-          x: 50,
-          y: 720,
-          size: 24,
-          font: helveticaBold,
-          color: rgb(0.1, 0.2, 0.4),
-        });
-
-        page1.drawText(
-          'This multi-page PDF document is generated locally inside your browser.\nIt tests client-side PDF object streams, metadata stripping, and layout retention.\nNo network upload is involved.',
-          {
-            x: 50,
-            y: 650,
-            size: 13,
-            font: helvetica,
-            color: rgb(0.2, 0.2, 0.2),
-            lineHeight: 20,
-          }
-        );
-
-        const page2 = doc.addPage([600, 800]);
-        page2.drawText('Page 2 - Metadata & Stream Tables', {
-          x: 50,
-          y: 720,
-          size: 20,
-          font: helveticaBold,
-          color: rgb(0.1, 0.2, 0.4),
-        });
-        page2.drawText(
-          'Page 2 content demonstrating multi-page stream rebuilding in pdf-lib.\nObject stream compression groups structural dictionaries to save space.',
-          {
-            x: 50,
-            y: 650,
-            size: 13,
-            font: helvetica,
-            color: rgb(0.2, 0.2, 0.2),
-            lineHeight: 20,
-          }
-        );
-
-        doc.setTitle('Sample Document with Bloated Metadata');
-        doc.setAuthor('Test Suite User');
-
-        const pdfBytes = await doc.save();
-        const samplePdfBlob = new Blob([pdfBytes as BlobPart], { type: 'application/pdf' });
-        const samplePdfFile = new File([samplePdfBlob], 'sample-document-2pages.pdf', {
-          type: 'application/pdf',
-          lastModified: Date.now(),
-        });
-        handleFilesSelected([samplePdfFile]);
-      });
-    }
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Quick Sample File Trigger for Testing */}
-      {files.length === 0 && (
-        <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400 pb-2">
-          <span>Don&apos;t have a file ready?</span>
-          <button
-            type="button"
-            onClick={() => handleLoadSample('image')}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 px-3 py-1.5 font-medium text-indigo-300 border border-indigo-500/30 transition-all hover:scale-105"
-          >
-            <FileImage className="h-3.5 w-3.5 text-indigo-400" />
-            Try Sample Image
-          </button>
-          <button
-            type="button"
-            onClick={() => handleLoadSample('pdf')}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 px-3 py-1.5 font-medium text-rose-300 border border-rose-500/30 transition-all hover:scale-105"
-          >
-            <FileText className="h-3.5 w-3.5 text-rose-400" />
-            Try Sample PDF
-          </button>
+    <div className="w-full max-w-xl mx-auto space-y-4">
+      {/* 1-Tap Target Presets Row */}
+      <PresetBar settings={settings} onChange={setSettings} disabled={isProcessing} />
+
+      {/* Minimalist Upload Box (Camera + Browse) */}
+      <DropZone onFilesSelected={handleFilesSelected} isProcessing={isProcessing} />
+
+      {/* Results List */}
+      {files.length > 0 && (
+        <div className="space-y-3 pt-1">
+          {files.map((item) => (
+            <ResultCard
+              key={item.id}
+              item={item}
+              targetMaxKB={settings.targetMaxKB}
+              onRemove={handleRemoveFile}
+            />
+          ))}
         </div>
       )}
 
-      {/* Drag and Drop Zone */}
-      <DropZone onFilesSelected={handleFilesSelected} isProcessing={isProcessingBatch} />
-
-      {/* Compression Presets & Manual Slider Controls */}
-      <CompressionControls
-        settings={settings}
-        onChange={setSettings}
-        onApplyAll={files.length > 0 ? handleRecompressAll : undefined}
-        disabled={isProcessingBatch}
-      />
-
-      {/* Ad Placement 2: ad-slot-action */}
+      {/* Ad Placement 2: ad-slot-action (placed near download results) */}
       <AdSlot id="ad-slot-action" format="action" />
 
-      {/* Batch Queue & Statistics Summary (when files exist) */}
-      {files.length > 0 && (
-        <BatchSummary
-          files={files}
-          onClearAll={handleClearAll}
-          onRecompressAll={handleRecompressAll}
-        />
-      )}
-
-      {/* Output Previews List */}
-      {files.length > 0 && (
-        <div className="w-full max-w-5xl mx-auto space-y-4">
-          <div className="flex items-center justify-between px-1">
-            <h3 className="text-lg font-bold text-slate-200 flex items-center gap-2">
-              <span>Compressed Files</span>
-              <span className="rounded-full bg-slate-800 px-2 py-0.5 text-xs text-slate-400">
-                {files.length}
-              </span>
-            </h3>
-          </div>
-
-          <div className="space-y-3.5">
-            {files.map((item) => (
-              <FileCard
-                key={item.id}
-                item={item}
-                onRemove={handleRemoveFile}
-                onRecompress={handleRecompress}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      {/* High-Retention Recent (3) Drawer */}
+      <RecentDrawer />
     </div>
   );
 }

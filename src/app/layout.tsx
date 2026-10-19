@@ -17,25 +17,25 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shrinkpure.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "ShrinkPure — Pure Client-Side Image & PDF Compressor",
-    template: "%s | ShrinkPure",
+    default: "Compress50KB — Free, Private Image & PDF Compressor",
+    template: "%s | Compress50KB",
   },
   description:
-    "Compress images (.jpg, .jpeg, .png) and PDFs entirely inside your browser. Quick presets for Under 20 KB, Under 50 KB, Under 100 KB, with Indian Exam presets (SSC 200x230, Signature 140x60). 100% Private & Secure — Zero server uploads.",
+    "Free, private image & PDF compressor for online forms. Compress photo to 50KB, signature under 20KB, and free PDF compressor with zero server uploads.",
   keywords: [
-    "compress photo to 50kb",
-    "signature under 20kb",
+    "Compress photo to 50KB",
+    "Signature under 20KB",
+    "Free PDF compressor",
     "free client-side pdf compressor",
     "ssc photo resizer",
     "upsc signature resizer",
     "compress image to 20kb",
-    "compress image to 50kb",
     "browser-image-compression",
     "pdf-lib",
   ],
-  authors: [{ name: "ShrinkPure" }],
-  creator: "ShrinkPure",
-  publisher: "ShrinkPure",
+  authors: [{ name: "Compress50KB" }],
+  creator: "Compress50KB",
+  publisher: "Compress50KB",
   formatDetection: {
     telephone: false,
   },
@@ -43,19 +43,19 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "ShrinkPure — Pure Client-Side Image & PDF Compressor",
+    title: "Compress50KB — Free, Private Image & PDF Compressor",
     description:
-      "Compress photos to 50KB, signatures to 20KB, and PDFs under 100KB with zero server uploads. 100% private in-browser tool.",
+      "Compress photo to 50KB, signature under 20KB, and free PDF compressor. 100% in-browser, zero server uploads.",
     url: siteUrl,
-    siteName: "ShrinkPure",
+    siteName: "Compress50KB",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ShrinkPure — Free Client-Side Image & PDF Compressor",
+    title: "Compress50KB — Free, Private Image & PDF Compressor",
     description:
-      "Instant in-browser image and PDF compression. Under 20KB, Under 50KB, and SSC/UPSC exam presets. Zero server uploads.",
+      "Compress photo to 50KB, signature under 20KB, and free PDF compressor. 100% in-browser, zero server uploads.",
   },
 };
 
@@ -72,7 +72,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100">{children}</body>
+      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-slate-950">
+        {children}
+      </body>
     </html>
   );
 }

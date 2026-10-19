@@ -2,14 +2,14 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'ShrinkPure — Pure Client-Side Image & PDF Compressor',
-    short_name: 'ShrinkPure',
+    name: 'Compress50KB — Free, Private Image & PDF Compressor',
+    short_name: 'Compress50KB',
     description:
-      'Fast, 100% private in-browser image and PDF compression. Under 20KB, 50KB, 100KB presets and Indian exam specifications. Zero server uploads.',
+      'Free, private image & PDF compressor for online forms. Compress photo to 50KB, signature under 20KB with zero server uploads.',
     start_url: '/',
     display: 'standalone',
     background_color: '#020617',
-    theme_color: '#4f46e5',
+    theme_color: '#10b981',
     icons: [
       {
         src: '/favicon.ico',
@@ -19,4 +19,3 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
   };
 }
-
