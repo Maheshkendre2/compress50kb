@@ -1,8 +1,23 @@
-# ShrinkPure — Pure Client-Side Image & PDF Compressor
+# ShrinkPure — Zero-Server Image & PDF Compression Engine & SEO Machine
 
-A production-ready, single-page responsive web application built with **Next.js (App Router)** and **Tailwind CSS** for **100% pure client-side image and PDF compression**. 
+A high-performance, production-ready web application built with **Next.js (App Router)** and **Tailwind CSS**. Designed for **100% pure client-side image and PDF compression**, organic Google search dominance, viral referral utility, and zero server storage.
 
 > **100% Private & Secure — Files are processed on your device and never uploaded to any server.**
+
+---
+
+## High-Volume Programmatic SEO Landing Pages
+
+All landing pages are statically pre-rendered (`generateStaticParams`) with custom H1 headers, tailored metadata, targeted FAQ schemas, and pre-selected presets:
+
+| Route | Pre-Selected Preset / Dimensions | Target Search Intent |
+| :--- | :--- | :--- |
+| **[`/compress-image-to-20kb`](/compress-image-to-20kb)** | Under 20 KB Preset | Government exam portals, candidate signature uploads |
+| **[`/compress-image-to-50kb`](/compress-image-to-50kb)** | Under 50 KB Preset | Passport photos, visa applications, state recruitment |
+| **[`/compress-image-to-100kb`](/compress-image-to-100kb)** | Under 100 KB Preset | Certificates, academic marksheets, high-detail photos |
+| **[`/compress-pdf-under-100kb`](/compress-pdf-under-100kb)** | Under 100 KB PDF Target | Tax slips, bank statements, confidential identity proofs |
+| **[`/ssc-photo-resizer`](/ssc-photo-resizer)** | **200 × 230 px** & < 50 KB | SSC CGL, CHSL, MTS & GD official specs |
+| **[`/signature-compressor-20kb`](/signature-compressor-20kb)** | **140 × 60 px** & < 20 KB | UPSC, SSC, IBPS, Railways, JEE & NEET signatures |
 
 ---
 
@@ -10,130 +25,80 @@ A production-ready, single-page responsive web application built with **Next.js 
 
 ```mermaid
 flowchart TD
-    User([User Device / Browser]) --> DropZone["Drag & Drop / File Input / Paste (Ctrl+V)"]
+    User([User Browser / Mobile]) --> DropZone["Drag & Drop / File Input / Paste (Ctrl+V)"]
     DropZone --> Dispatcher{File Type Router}
     
-    subgraph ClientSideEngine ["100% In-Browser Execution (Zero Network Activity)"]
-        Dispatcher -->|Image: JPG, JPEG, PNG, WebP| ImageWorker["browser-image-compression (Canvas / Web Worker)"]
-        Dispatcher -->|Document: PDF| PdfEngine["pdf-lib (Object Streams & Rebuild)"]
+    subgraph LocalEngine ["100% Client-Side Sandbox (Zero Remote Calls)"]
+        Dispatcher -->|Images: JPG, PNG, WebP| CanvasResize["HTML5 Canvas Exact Dimension Resizer (e.g. 200x230, 140x60)"]
+        CanvasResize --> WorkerComp["browser-image-compression (Web Worker Quantization)"]
+        Dispatcher -->|Documents: PDF| PdfEngine["pdf-lib (Object Streams & Revision Purging)"]
         
-        Controls["Presets & Slider Controls\n- Under 20 KB\n- Under 50 KB\n- Under 100 KB\n- Custom Target & Quality"] -.-> ImageWorker
+        Controls["Presets & Sliders\n- 20KB / 50KB / 100KB\n- Indian Exam Presets (SSC, UPSC, IBPS)\n- Manual Quality & Custom Sliders"] -.-> WorkerComp
         Controls -.-> PdfEngine
         
-        ImageWorker --> ImgResult["Compressed Image Blob\n& Dimensions"]
-        PdfEngine --> PdfResult["Optimized PDF Blob\n& Page Metrics"]
+        WorkerComp --> ImgBlob["Compressed Image Blob"]
+        PdfEngine --> PdfBlob["Optimized PDF Blob"]
     end
     
-    ImgResult --> OutputCard["Output Preview Card\n- Original Size vs Compressed Size\n- Reduction %\n- Before/After Modal Comparison"]
-    PdfResult --> OutputCard
+    ImgBlob --> Actions["Output Preview Card"]
+    PdfBlob --> Actions
     
-    OutputCard --> DownloadBtn["Prominent Download Button (Direct)"]
-    OutputCard --> ZipBatch["Batch JSZip (.zip export)"]
+    Actions --> DirectDL["Prominent Download Button"]
+    Actions --> ClipCopy["Direct Copy to Clipboard (PNG Canvas Blob)"]
+    Actions --> ZipExport["Batch ZIP Export (JSZip)"]
+    Actions --> WAShare["Floating WhatsApp Share Referral"]
 ```
 
 ---
 
-## Key Features & Requirements Matrix
+## Production SEO & Technical Architecture
 
-| Requirement | Implementation Detail | Source File |
-| :--- | :--- | :--- |
-| **1. Pure Client-Side Processing** | `browser-image-compression` for images, `pdf-lib` for PDFs. Zero external API calls, zero server telemetry. Runs on browser Canvas, WebAssembly, and Web Workers. | [`src/lib/compressors/imageCompressor.ts`](src/lib/compressors/imageCompressor.ts)<br>[`src/lib/compressors/pdfCompressor.ts`](src/lib/compressors/pdfCompressor.ts) |
-| **2. Drag-and-Drop Area** | Modern drag-and-drop zone with active hover states, drag pulsing, file picker fallback, format filters (`.jpg`, `.jpeg`, `.png`, `.pdf`), and clipboard paste (`Ctrl+V`). | [`src/components/DropZone.tsx`](src/components/DropZone.tsx) |
-| **3. Quick Target Presets** | One-touch preset buttons for **"Under 20 KB"**, **"Under 50 KB"**, **"Under 100 KB"**, plus custom target size slider (10 KB – 1000 KB) and manual quality adjustment slider (10% – 100%). | [`src/components/CompressionControls.tsx`](src/components/CompressionControls.tsx) |
-| **4. Output Preview & Download** | Live display of original file size, compressed file size, percentage reduction badge (e.g. `-74%`), visual Before vs After modal comparison, PDF preview in new tab, prominent gradient Download button, and multi-file ZIP export. | [`src/components/FileCard.tsx`](src/components/FileCard.tsx)<br>[`src/components/BatchSummary.tsx`](src/components/BatchSummary.tsx) |
-| **5. Trust & Privacy Banner** | Clean prominent badge: *"100% Private & Secure — Files are processed on your device and never uploaded to any server."* with security indicators. | [`src/components/TrustBanner.tsx`](src/components/TrustBanner.tsx) |
-| **6. Reserved Ad Placements** | Clean, responsive placeholder containers (`<div>`) labeled `ad-slot-header`, `ad-slot-action`, and `ad-slot-footer`. | [`src/components/AdSlot.tsx`](src/components/AdSlot.tsx) |
+### 1. Structured Data (JSON-LD)
+Every route injects valid, rich schema markup using [`src/components/SeoStructuredData.tsx`](src/components/SeoStructuredData.tsx):
+- **`WebApplication` Schema**: Highlights zero server upload privacy, offline WebAssembly/Canvas processing, free offer details, and browser requirements.
+- **`FAQPage` Schema**: Grounded in official exam specifications and client-side privacy answers to capture Google rich snippet accordions in SERP.
 
----
+### 2. Native Dynamic `sitemap.xml` & `robots.txt`
+- [`src/app/sitemap.ts`](src/app/sitemap.ts): Dynamically enumerates root and all programmatic landing pages with update frequencies and priorities.
+- [`src/app/robots.ts`](src/app/robots.ts): Full search engine crawl permissions pointing to canonical `sitemap.xml`.
 
-## Project Structure
+### 3. Progressive Web App (PWA) & Offline Mode
+- [`src/app/manifest.ts`](src/app/manifest.ts): Configures full PWA manifest with standalone display and brand palette.
+- [`public/sw.js`](public/sw.js): Lightweight offline service worker caching application shell.
+- [`src/components/PwaInstallPrompt.tsx`](src/components/PwaInstallPrompt.tsx): Native "Add to Home Screen" prompt with offline status indicator.
 
-```
-├── src/
-│   ├── app/
-│   │   ├── favicon.ico
-│   │   ├── globals.css              # Tailwind CSS v4 setup
-│   │   ├── layout.tsx               # Root layout & SEO metadata
-│   │   └── page.tsx                 # Main Single-Page App orchestration
-│   ├── components/
-│   │   ├── AdSlot.tsx               # Ad slots (header, action, footer)
-│   │   ├── BatchSummary.tsx         # Batch operations, queue stats, and ZIP export
-│   │   ├── CompressionControls.tsx  # Target presets (20KB/50KB/100KB) and sliders
-│   │   ├── DropZone.tsx             # Drag-and-drop area with format badges & paste
-│   │   ├── FaqSection.tsx           # Technical architecture & security explanation
-│   │   ├── FileCard.tsx             # File card with preview, comparison & download
-│   │   ├── Footer.tsx               # Footer with privacy assurance
-│   │   ├── Header.tsx               # Brand header with status badges
-│   │   └── TrustBanner.tsx          # 100% Private & Secure trust banner
-│   ├── lib/
-│   │   ├── compressors/
-│   │   │   ├── imageCompressor.ts   # browser-image-compression engine
-│   │   │   └── pdfCompressor.ts     # pdf-lib rebuilding & stream compression
-│   │   └── utils.ts                 # Formatting, download triggers, and JSZip export
-│   └── types/
-│       └── compression.ts           # Interfaces, configs, and preset definitions
-├── package.json
-├── tsconfig.json
-└── README.md
-```
+### 4. Viral Growth & Conversion Features
+- **🇮🇳 Indian Exam Presets**: Instant dimension & byte locking for:
+  - *Passport Photo*: 350x450 px, < 50 KB
+  - *Signature*: 140x60 px, < 20 KB
+  - *SSC Official Photo*: 200x230 px, < 50 KB
+  - *Document / Certificate*: < 100 KB
+  - *Left Thumb Impression*: 160x100 px, < 30 KB
+- **Direct Copy to Clipboard**: Mobile and desktop users can copy compressed images straight to clipboard via the Clipboard API, avoiding download folder clutter.
+- **Viral WhatsApp Share**: Floating referral button with pre-filled message:
+  `"Resize signatures (<20KB) & photos (<50KB) for government exam forms with zero server uploads: [CURRENT_URL]"`
+
+### 5. CLS-Protected Strategic Ad Slots
+- `ad-slot-header`: Fixed min-height `50px` (mobile 320x50) / `90px` (desktop 728x90 leaderboard).
+- `ad-slot-action`: Fixed min-height `250px`, width `300px` (300x250 medium rectangle).
+- `ad-slot-footer`: Fixed min-height `90px` (responsive bottom leaderboard).
 
 ---
 
-## Technical Deep-Dive
+## Running Locally
 
-### 1. Image Compression Engine (`browser-image-compression`)
-- **Iterative Size Targeting**: When a target preset like **Under 20 KB** or **Under 50 KB** is selected, the engine balances pixel resolution constraints (e.g. 800px – 1280px max dimension) and quality quantization to ensure the output reliably lands beneath the target threshold.
-- **Web Worker Offloading**: Image compression runs off the main thread to avoid UI freezing or input lag.
-- **Format Flexibility**: Supports converting to WebP (greatest compression ratio) or keeping original JPEG/PNG types.
-
-### 2. PDF Compression Engine (`pdf-lib`)
-- **Stream Rebuilding**: Incremental revisions, orphaned objects, and unused dictionaries in existing PDFs are eliminated by copying active page trees into a fresh `PDFDocument`.
-- **Object Streams (PDF 1.5)**: Non-stream objects are compressed together into object streams (`useObjectStreams: true`), significantly shrinking structural overhead.
-- **Metadata Scrubbing**: Removes bloated authoring tools and system metadata when desired.
-
----
-
-## Getting Started
-
-### Prerequisites
-- Node.js 18.18+ or 20+
-- npm, yarn, pnpm, or bun
-
-### 1. Install Dependencies
 ```bash
-npm install
-```
-
-### 2. Run the Development Server
-```bash
+# Start development server
 npm run dev
-```
-Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
-### 3. Build for Production
-```bash
+# Run ESLint validation (0 errors, 0 warnings)
+npm run lint
+
+# Production compilation & static page generation
 npm run build
-```
 
-### 4. Run the Production Server
-```bash
+# Start production server
 npm run start
 ```
 
----
-
-## Verifying Zero-Server Privacy
-
-To verify that files never leave your machine:
-1. Open the app in Chrome, Edge, Firefox, or Safari.
-2. Open **Developer Tools** (`F12` or `Ctrl+Shift+I`) and switch to the **Network** tab.
-3. Select any image or PDF file and compress it.
-4. Filter by `Fetch/XHR` or `All`:
-   - **0 upload requests** are made.
-   - All processing is done locally within memory using Canvas and WebAssembly.
-5. You can even disconnect your internet (or enable Airplane Mode) after loading the site — compression continues to function normally.
-
----
-
-## License
-MIT
+Visit [http://localhost:3000](http://localhost:3000) or any landing page e.g. [http://localhost:3000/ssc-photo-resizer](http://localhost:3000/ssc-photo-resizer).
