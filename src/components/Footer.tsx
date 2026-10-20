@@ -18,7 +18,7 @@ export default function Footer() {
           <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500 inline-block animate-pulse" />
           <span>by</span>
           <a
-            href="https://github.com/Maheshkendre2"
+            href="https://mahesh-kendre-portfolio.web.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-emerald-400 hover:text-emerald-300 font-bold underline decoration-emerald-500/40 hover:decoration-emerald-400 underline-offset-4 inline-flex items-center gap-1 transition-colors"
@@ -29,7 +29,17 @@ export default function Footer() {
         </div>
 
         {/* Navigation & Project Links */}
-        <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-500 pt-1">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[11px] text-slate-500 pt-1">
+          <a
+            href="https://mahesh-kendre-portfolio.web.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-emerald-400 transition-colors inline-flex items-center gap-1 text-slate-400 font-medium"
+          >
+            <span>Portfolio</span>
+            <ExternalLink className="h-2.5 w-2.5 text-slate-500" />
+          </a>
+          <span>&bull;</span>
           <a
             href="https://github.com/Maheshkendre2/compress50kb"
             target="_blank"

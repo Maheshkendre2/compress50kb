@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     "browser-image-compression",
     "pdf-lib",
   ],
-  authors: [{ name: "Mahesh Kendre", url: "https://github.com/Maheshkendre2" }],
+  authors: [{ name: "Mahesh Kendre", url: "https://mahesh-kendre-portfolio.web.app/" }],
   creator: "Mahesh Kendre",
   publisher: "Mahesh Kendre",
   formatDetection: {

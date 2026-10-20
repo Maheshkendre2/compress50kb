@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Zap } from 'lucide-react';
+import { ShieldCheck, Zap, ExternalLink } from 'lucide-react';
 import PwaInstallPrompt from './PwaInstallPrompt';
 
 export default function Header() {
@@ -22,18 +22,31 @@ export default function Header() {
         </Link>
 
         {/* Subtle Security Pill, Dev Attribution & PWA Install */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 sm:px-3 py-1 text-xs font-semibold text-emerald-300">
             <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="hidden sm:inline">🔒 100% In-Browser &bull; Zero Uploads</span>
-            <span className="sm:hidden">🔒 Zero Uploads</span>
+            <span className="hidden md:inline">🔒 100% In-Browser &bull; Zero Uploads</span>
+            <span className="md:hidden">🔒 Zero Uploads</span>
           </div>
+
+          {/* Mahesh Kendre Portfolio Link */}
+          <a
+            href="https://mahesh-kendre-portfolio.web.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Mahesh Kendre Portfolio"
+            className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40 transition-colors"
+          >
+            <span className="hidden sm:inline">Portfolio</span>
+            <span className="sm:hidden text-[11px]">Dev</span>
+            <ExternalLink className="h-3 w-3 text-slate-400" />
+          </a>
 
           <a
             href="https://github.com/Maheshkendre2"
             target="_blank"
             rel="noopener noreferrer"
-            title="Developed by Mahesh Kendre"
+            title="Developed by Mahesh Kendre (GitHub)"
             className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition-colors"
           >
             <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
