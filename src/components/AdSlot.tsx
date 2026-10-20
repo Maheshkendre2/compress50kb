@@ -30,6 +30,9 @@ const AD_CONFIGS: Record<'header' | 'action', AdConfig> = {
   },
 };
 
+// Master toggle: Set to true when you reach 1,000+ daily visitors to monetize
+const ADS_ENABLED = false;
+
 export default function AdSlot({ id, className = '', format }: AdSlotProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [adBlocked, setAdBlocked] = useState(false);
@@ -39,6 +42,7 @@ export default function AdSlot({ id, className = '', format }: AdSlotProps) {
 
   // 1. Detect if the browser has an active ad blocker (uBlock, Brave Shields, AdBlock)
   useEffect(() => {
+    if (!ADS_ENABLED) return;
     fetch('https://bellnewyork.org/22/07873f92c3870ee0e6dbc401defeb44b', {
       method: 'HEAD',
       mode: 'no-cors',
@@ -49,6 +53,7 @@ export default function AdSlot({ id, className = '', format }: AdSlotProps) {
 
   // 2. Render isolated iframe with srcdoc to guarantee execution and prevent variable collisions
   useEffect(() => {
+    if (!ADS_ENABLED) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -144,6 +149,10 @@ export default function AdSlot({ id, className = '', format }: AdSlotProps) {
       }
     };
   }, [slotType, id]);
+
+  if (!ADS_ENABLED) {
+    return null;
+  }
 
   const minHeightClass =
     slotType === 'header'

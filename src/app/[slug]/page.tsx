@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
-import AdSlot from '@/components/AdSlot';
 import CompressorWorkspace from '@/components/CompressorWorkspace';
 import SeoStructuredData from '@/components/SeoStructuredData';
 import PopularToolsNav from '@/components/PopularToolsNav';
@@ -94,9 +93,6 @@ export default async function ProgrammaticLandingPage({ params }: PageProps) {
             {page.h1}
           </span>
         </nav>
-
-        {/* Clean Ad Placement 1 */}
-        <AdSlot id="ad-slot-header" format="header" />
 
         {/* 1-Line Minimalist Hero */}
         <div className="text-center space-y-1">

@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import AdSlot from '@/components/AdSlot';
 import CompressorWorkspace from '@/components/CompressorWorkspace';
 import SeoStructuredData from '@/components/SeoStructuredData';
 import PopularToolsNav from '@/components/PopularToolsNav';
@@ -49,9 +48,6 @@ export default function Home() {
 
       {/* Main Single Column Area */}
       <main className="flex-1 max-w-xl w-full mx-auto px-4 py-4 sm:py-6 space-y-4">
-        {/* Clean Ad Placement 1: ad-slot-header */}
-        <AdSlot id="ad-slot-header" format="header" />
-
         {/* 1-Line Minimalist Hero */}
         <div className="text-center space-y-1">
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">

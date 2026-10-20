@@ -5,7 +5,6 @@ import PresetBar from '@/components/PresetBar';
 import DropZone from '@/components/DropZone';
 import ResultCard from '@/components/ResultCard';
 import RecentDrawer from '@/components/RecentDrawer';
-import AdSlot from '@/components/AdSlot';
 
 import type {
   CompressedFileResult,
@@ -219,9 +218,6 @@ export default function CompressorWorkspace({
           ))}
         </div>
       )}
-
-      {/* Ad Placement 2: ad-slot-action (placed near download results) */}
-      <AdSlot id="ad-slot-action" format="action" />
 
       {/* High-Retention Recent (3) Drawer */}
       <RecentDrawer />
