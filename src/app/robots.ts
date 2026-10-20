@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://shrinkpure.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://compress50kb.vercel.app';
 
 export default function robots(): MetadataRoute.Robots {
   return {

@@ -3,5 +3,5 @@
   <ShortName>Compress50KB</ShortName>
   <Description>Free, Private In-Browser Image &amp; PDF Compressor</Description>
   <InputEncoding>UTF-8</InputEncoding>
-  <Url type="text/html" template="https://shrinkpure.com/?q={searchTerms}"/>
+  <Url type="text/html" template="https://compress50kb.vercel.app/?q={searchTerms}"/>
 </OpenSearchDescription>

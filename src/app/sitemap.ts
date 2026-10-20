@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { ALL_LANDING_PAGES } from '@/data/landingPages';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://shrinkpure.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://compress50kb.vercel.app';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: MetadataRoute.Sitemap = [

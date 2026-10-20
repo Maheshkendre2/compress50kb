@@ -19,7 +19,7 @@ export default function WhatsAppShare({
       customUrl ||
       (typeof window !== 'undefined'
         ? window.location.href
-        : 'https://shrinkpure.com');
+        : 'https://compress50kb.vercel.app');
     const message = `Resize signatures (<20KB) & photos (<50KB) for government exam forms with zero server uploads: ${url}`;
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
       message

@@ -74,14 +74,14 @@ export default function ResultCard({
   };
 
   const handleShareWhatsApp = () => {
-    const url = typeof window !== 'undefined' ? window.location.href : 'https://shrinkpure.com';
+    const url = typeof window !== 'undefined' ? window.location.href : 'https://compress50kb.vercel.app';
     const message = `Resize signatures (<20KB) & photos (<50KB) for government exam forms with zero server uploads: ${url}`;
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleNativeShare = async () => {
-    const url = typeof window !== 'undefined' ? window.location.href : 'https://shrinkpure.com';
+    const url = typeof window !== 'undefined' ? window.location.href : 'https://compress50kb.vercel.app';
     const text = 'Resize signatures (<20KB) & photos (<50KB) for government exam forms with zero server uploads:';
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
@@ -253,7 +253,7 @@ export default function ResultCard({
             <button
               type="button"
               onClick={() => {
-                const url = typeof window !== 'undefined' ? window.location.href : 'https://shrinkpure.com';
+                const url = typeof window !== 'undefined' ? window.location.href : 'https://compress50kb.vercel.app';
                 const text = 'Resize signatures (<20KB) & photos (<50KB) for government exam forms with zero server uploads:';
                 const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
                 window.open(telegramUrl, '_blank', 'noopener,noreferrer');

@@ -99,7 +99,7 @@ export default function SeoStructuredData({
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: process.env.NEXT_PUBLIC_SITE_URL || 'https://shrinkpure.com',
+        item: process.env.NEXT_PUBLIC_SITE_URL || 'https://compress50kb.vercel.app',
       },
       {
         '@type': 'ListItem',

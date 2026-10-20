@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://shrinkpure.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://compress50kb.vercel.app';
   const pageUrl = `${siteUrl}/${page.slug}`;
 
   return {
@@ -66,7 +66,7 @@ export default async function ProgrammaticLandingPage({ params }: PageProps) {
     notFound();
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://shrinkpure.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://compress50kb.vercel.app';
   const pageUrl = `${siteUrl}/${page.slug}`;
 
   return (

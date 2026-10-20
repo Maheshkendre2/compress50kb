@@ -32,7 +32,7 @@ const HOME_FAQS = [
 ];
 
 export default function Home() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://shrinkpure.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://compress50kb.vercel.app';
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
