@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import CompressorWorkspace from '@/components/CompressorWorkspace';
 import SeoStructuredData from '@/components/SeoStructuredData';
 import PopularToolsNav from '@/components/PopularToolsNav';
@@ -139,10 +140,8 @@ export default async function ProgrammaticLandingPage({ params }: PageProps) {
         <PopularToolsNav currentSlug={slug} />
       </main>
 
-      {/* Minimalist Footer */}
-      <footer className="w-full border-t border-slate-900 py-4 px-4 text-center text-[11px] text-slate-500">
-        <p>100% Client-Side &bull; No files sent to any server &bull; Compress50KB</p>
-      </footer>
+      {/* Developer Credit & Minimalist Footer */}
+      <Footer />
     </div>
   );
 }
